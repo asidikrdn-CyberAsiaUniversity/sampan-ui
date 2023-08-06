@@ -6,6 +6,7 @@ import CreateTransaction from "../component/modals/addTransaction";
 import moment from "moment";
 import "moment/locale/id";
 import DetailTrxModal from "../component/modals/detailTransaction";
+import EditTransaction from "../component/modals/editTransaction";
 moment.locale("id");
 
 const Transaction = () => {
@@ -15,6 +16,7 @@ const Transaction = () => {
   const [isCreateTransactionModalOpen, setIsCreateTransactionModalOpen] =
     useState(false);
   const [isDetailTrxkModalOpen, setIsDetailTrxkModalOpen] = useState(false);
+  const [isEditTrxkModalOpen, setIsEditTrxkModalOpen] = useState(false);
   const [idTrxActive, setIdTrxActive] = useState();
 
   const {
@@ -66,6 +68,12 @@ const Transaction = () => {
           <DetailTrxModal
             isOpen={isDetailTrxkModalOpen}
             setIsOpen={setIsDetailTrxkModalOpen}
+            idTrx={idTrxActive}
+          />
+          <EditTransaction
+            isOpen={isEditTrxkModalOpen}
+            setIsOpen={setIsEditTrxkModalOpen}
+            refetchTransaksi={refetchTransaksi}
             idTrx={idTrxActive}
           />
           <div className="w-full sm:w-auto flex mt-4 sm:mt-0">
@@ -125,7 +133,13 @@ const Transaction = () => {
                           >
                             <i class="fas fa-eye"></i> View
                           </span>
-                          <span class="btn btn-app">
+                          <span
+                            class="btn btn-app"
+                            onClick={() => {
+                              setIdTrxActive(el.id);
+                              setIsEditTrxkModalOpen(true);
+                            }}
+                          >
                             <i class="fas fa-edit"></i> Edit
                           </span>
                         </td>

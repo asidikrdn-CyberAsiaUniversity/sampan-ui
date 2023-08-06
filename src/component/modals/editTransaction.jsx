@@ -1,20 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMutation, useQuery } from "react-query";
 import Select from "react-select";
 import { BeatLoader } from "react-spinners";
 import Swal from "sweetalert2";
 import { API } from "../../config/api";
 
-function CreateTransaction({ isOpen, setIsOpen, refetchTransaksi }) {
+function EditTransaction({ isOpen, setIsOpen, refetchTransaksi, idTrx }) {
   const [form, setForm] = useState({});
   const [customerOption, setCustomerOption] = useState([]);
   const [categoryOption, setCategoryOption] = useState([]);
 
+  const {
+    data: trx,
+    isLoading: trxIsLoading,
+    // refetch: refetchTrx,
+  } = useQuery(
+    [
+      "detailTrxCache",
+      isOpen,
+      idTrx,
+      API.defaults.headers.common["Authorization"],
+    ],
+    async () => {
+      try {
+        const response = await API.get(`/trash/transactions/${idTrx}`);
+
+        return response.data.data;
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  );
+
+  useEffect(() => {
+    console.log(trx);
+    setForm({
+      userId: trx?.customer.id,
+      trashId: trx?.trash.id,
+      qty: trx?.qty,
+    });
+  }, [trx]);
+
   // add Transaction to server
-  const handleAddTransaction = useMutation(async (e) => {
+  const handleUpdateTransaction = useMutation(async (e) => {
     e.preventDefault();
     try {
-      const response = await API.post("/trash/transactions", {
+      const response = await API.patch(`/trash/transactions/${idTrx}`, {
         userId: form.userId,
         trashId: form.trashId,
         qty: parseInt(form.qty),
@@ -26,7 +57,7 @@ function CreateTransaction({ isOpen, setIsOpen, refetchTransaksi }) {
         handleClose();
         Swal.fire({
           icon: "success",
-          text: `Berhasil menambahkan transaksi`,
+          text: `Berhasil mengupdate transaksi`,
         });
       }
     } catch (error) {
@@ -76,6 +107,7 @@ function CreateTransaction({ isOpen, setIsOpen, refetchTransaksi }) {
           opt.push({ value: el.id, label: el.category });
         });
 
+        console.log("categoryOpt :", opt);
         setCategoryOption(opt);
 
         // return response.data.data;
@@ -97,6 +129,7 @@ function CreateTransaction({ isOpen, setIsOpen, refetchTransaksi }) {
           opt.push({ value: el.id, label: el.fullname });
         });
 
+        console.log("customerOpt :", opt);
         setCustomerOption(opt);
 
         // return response.data.data;
@@ -146,18 +179,19 @@ function CreateTransaction({ isOpen, setIsOpen, refetchTransaksi }) {
   // console.log("data form", form);
   return (
     <div>
-      {handleAddTransaction.isLoading && <BeatLoader color="#36d7b7" />}
+      {handleUpdateTransaction.isLoading && <BeatLoader color="#36d7b7" />}
+      {trxIsLoading && <BeatLoader color="#36d7b7" />}
       <div style={modalStyle}>
         <div style={contentStyle}>
           <button style={closeStyle} onClick={handleClose}>
             X
           </button>
-          {/* Form Tambah TrashCategory */}
+          {/* Form Edit TrashCategory */}
           <div className="box p-3">
             <div className="grid grid-cols-12">
               <div class=" col-span-12 lg:col-span-12 mt-3">
                 <h2 className="text-lg font-medium mr-auto">
-                  Tambah Data Transaksi
+                  Edit Data Transaksi
                 </h2>
               </div>
 
@@ -234,11 +268,11 @@ function CreateTransaction({ isOpen, setIsOpen, refetchTransaksi }) {
 
               <div className="col-span-12 lg:col-span-12 d-flex justify-content-center mr-2 mt-2">
                 <button
-                  onClick={handleAddTransaction.mutate}
+                  onClick={handleUpdateTransaction.mutate}
                   className="btn btn-primary"
                 >
                   {" "}
-                  <i className="fa fa-save w-4 h-4 mr-2"> </i> Tambah Data
+                  <i className="fa fa-save w-4 h-4 mr-2"> </i> Simpan Data
                   Transaksi{" "}
                 </button>
               </div>
@@ -250,4 +284,4 @@ function CreateTransaction({ isOpen, setIsOpen, refetchTransaksi }) {
   );
 }
 
-export default CreateTransaction;
+export default EditTransaction;
