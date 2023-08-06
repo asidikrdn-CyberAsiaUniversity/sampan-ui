@@ -4,6 +4,7 @@ import { API } from "../config/api";
 import { BeatLoader } from "react-spinners";
 import CreateCustomer from "../component/modals/addCustomer";
 import DetailUserModal from "../component/modals/detailUser";
+import EditUser from "../component/modals/editUser";
 
 const Nasabah = () => {
   const [activePage, setActivePage] = useState(1);
@@ -12,6 +13,7 @@ const Nasabah = () => {
   const [isCreateCustomerModalOpen, setIsCreateCustomerkModalOpen] =
     useState(false);
   const [isDetailUserModalOpen, setIsDetailUserkModalOpen] = useState(false);
+  const [isEditUserModalOpen, setIsEditUserkModalOpen] = useState(false);
   const [idUserActive, setIdUserActive] = useState();
 
   const {
@@ -61,6 +63,12 @@ const Nasabah = () => {
             setIsOpen={setIsDetailUserkModalOpen}
             idUser={idUserActive}
           />
+          <EditUser
+            isOpen={isEditUserModalOpen}
+            setIsOpen={setIsEditUserkModalOpen}
+            refetchUser={refetchCustomer}
+            idUser={idUserActive}
+          />
           <div className="w-full sm:w-auto flex mt-4 sm:mt-0">
             <button
               onClick={() => {
@@ -108,7 +116,13 @@ const Nasabah = () => {
                           >
                             <i class="fas fa-eye"></i> View
                           </span>
-                          <span class="btn btn-app">
+                          <span
+                            class="btn btn-app"
+                            onClick={() => {
+                              setIdUserActive(data.id);
+                              setIsEditUserkModalOpen(true);
+                            }}
+                          >
                             <i class="fas fa-edit"></i> Edit
                           </span>
                         </td>

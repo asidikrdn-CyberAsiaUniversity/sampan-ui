@@ -4,6 +4,7 @@ import { API } from "../config/api";
 import { BeatLoader } from "react-spinners";
 import CreateAdmin from "../component/modals/addStaffAdmin";
 import DetailUserModal from "../component/modals/detailUser";
+import EditUser from "../component/modals/editUser";
 
 const Staff = () => {
   const [activePage, setActivePage] = useState(1);
@@ -12,6 +13,7 @@ const Staff = () => {
   const [isCreateAdminModalOpen, setIsCreateCustomerkModalOpen] =
     useState(false);
   const [isDetailUserModalOpen, setIsDetailUserkModalOpen] = useState(false);
+  const [isEditUserModalOpen, setIsEditUserkModalOpen] = useState(false);
   const [idUserActive, setIdUserActive] = useState();
 
   const {
@@ -25,6 +27,25 @@ const Staff = () => {
         const response = await API.get(
           `/users/staff?page=${activePage}&limit=10`
         );
+
+        let pages = [];
+        for (let i = 1; i <= response.data.totalPages; i++) {
+          pages.push(i);
+        }
+
+        setPages(pages);
+        return response.data.data;
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  );
+
+  const { data: profile } = useQuery(
+    ["profileCache", activePage, API.defaults.headers.common["Authorization"]],
+    async () => {
+      try {
+        const response = await API.get(`/users/profile`);
 
         let pages = [];
         for (let i = 1; i <= response.data.totalPages; i++) {
@@ -59,6 +80,12 @@ const Staff = () => {
           <DetailUserModal
             isOpen={isDetailUserModalOpen}
             setIsOpen={setIsDetailUserkModalOpen}
+            idUser={idUserActive}
+          />
+          <EditUser
+            isOpen={isEditUserModalOpen}
+            setIsOpen={setIsEditUserkModalOpen}
+            refetchUser={refetchStaff}
             idUser={idUserActive}
           />
           <div className="w-full sm:w-auto flex mt-4 sm:mt-0">
@@ -112,9 +139,17 @@ const Staff = () => {
                               >
                                 <i class="fas fa-eye"></i> View
                               </span>
-                              <span class="btn btn-app">
-                                <i class="fas fa-edit"></i> Edit
-                              </span>
+                              {data.id === profile?.id && (
+                                <span
+                                  class="btn btn-app"
+                                  onClick={() => {
+                                    setIdUserActive(data.id);
+                                    setIsEditUserkModalOpen(true);
+                                  }}
+                                >
+                                  <i class="fas fa-edit"></i> Edit
+                                </span>
+                              )}
                             </>
                           )}
                         </td>
