@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useQuery } from "react-query";
-import { API } from "../config/api";
+import { useMutation, useQuery } from "react-query";
 import { BeatLoader } from "react-spinners";
+import Swal from "sweetalert2";
 import CreateTrashCategory from "../component/modals/addTrashCategory";
 import EditTrashCategory from "../component/modals/editTrashCategory";
+import { API } from "../config/api";
 
 const Kategori = () => {
+  const [totalData, setTotalData] = useState();
   const [activePage, setActivePage] = useState(1);
   const [hoveredPage, setHoveredPage] = useState(0);
   const [pages, setPages] = useState([1, 2, 3]);
@@ -14,6 +16,7 @@ const Kategori = () => {
   const [isEditTrashCategoryModalOpen, setIsEditTrashCategorykModalOpen] =
     useState(false);
   const [idTrashActive, setIdTrashActive] = useState();
+  const [limit] = useState(5);
 
   const {
     data: kategoriSampah,
@@ -28,7 +31,7 @@ const Kategori = () => {
     async () => {
       try {
         const response = await API.get(
-          `/trash/categories?page=${activePage}&limit=5`
+          `/trash/categories?page=${activePage}&limit=${limit}`
         );
 
         let pages = [];
@@ -37,12 +40,35 @@ const Kategori = () => {
         }
 
         setPages(pages);
+        setTotalData(response.data.totalData);
+
         return response.data.data;
       } catch (e) {
         console.log(e);
       }
     }
   );
+
+  const handleDeleteTrashCategory = useMutation(async (id) => {
+    try {
+      const response = await API.delete(`/trash/categories/${id}`);
+      if (response.data.status === 200) {
+        if (
+          pages?.length > 1 &&
+          activePage === pages?.length &&
+          totalData - (pages?.length - 1) * limit === 1
+        ) {
+          setActivePage((prev) => {
+            return prev - 1;
+          });
+        }
+        refetchKategoriSampah();
+        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  });
 
   return (
     <>
@@ -90,17 +116,23 @@ const Kategori = () => {
                     <th scope="col">No</th>
                     <th scope="col">Jenis Sampah</th>
                     <th scope="col">Harga Sampah/KG</th>
-                    <th scope="col">Action</th>
+                    <th scope="col" className="text-center" width={"20%"}>
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {kategoriSampah?.map((data, i) => {
                     return (
                       <tr>
-                        <th scope="row">{i + 1}</th>
+                        <th scope="row">
+                          {activePage === 1
+                            ? i + 1
+                            : i + (activePage - 1) * limit + 1}
+                        </th>
                         <td>{data.category}</td>
                         <td>{data.price}/KG</td>
-                        <td>
+                        <td className="text-center">
                           <span
                             class="btn btn-app"
                             onClick={() => {
@@ -109,6 +141,26 @@ const Kategori = () => {
                             }}
                           >
                             <i class="fas fa-edit"></i> Edit
+                          </span>
+                          <span
+                            class="btn btn-app"
+                            onClick={() => {
+                              Swal.fire({
+                                title: "Are you sure?",
+                                text: "You won't be able to revert this!",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#3085d6",
+                                cancelButtonColor: "#d33",
+                                confirmButtonText: "Yes, delete it!",
+                              }).then((result) => {
+                                if (result.isConfirmed) {
+                                  handleDeleteTrashCategory.mutate(data.id);
+                                }
+                              });
+                            }}
+                          >
+                            <i class="fas fa-trash"></i> Delete
                           </span>
                         </td>
                       </tr>
