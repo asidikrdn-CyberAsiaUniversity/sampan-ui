@@ -69,7 +69,7 @@ const Dashboard = () => {
   return (
     <>
       <div class="container-fluid p-5 w-100">
-        <div className="row">
+        <div className="row p-3">
           <div className="col-5">
             <VictoryPie
               labelComponent={<VictoryTooltip />}
