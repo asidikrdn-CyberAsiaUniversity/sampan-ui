@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { API } from "../config/api";
 import { BeatLoader } from "react-spinners";
 import CreateTrashCategory from "../component/modals/addTrashCategory";
+import EditTrashCategory from "../component/modals/editTrashCategory";
 
 const Kategori = () => {
   const [activePage, setActivePage] = useState(1);
@@ -10,6 +11,9 @@ const Kategori = () => {
   const [pages, setPages] = useState([1, 2, 3]);
   const [isCreateTrashCategoryModalOpen, setIsCreateTrashCategorykModalOpen] =
     useState(false);
+  const [isEditTrashCategoryModalOpen, setIsEditTrashCategorykModalOpen] =
+    useState(false);
+  const [idTrashActive, setIdTrashActive] = useState();
 
   const {
     data: kategoriSampah,
@@ -57,6 +61,12 @@ const Kategori = () => {
             setIsOpen={setIsCreateTrashCategorykModalOpen}
             refetchKategoriSampah={refetchKategoriSampah}
           />
+          <EditTrashCategory
+            isOpen={isEditTrashCategoryModalOpen}
+            setIsOpen={setIsEditTrashCategorykModalOpen}
+            refetchKategoriSampah={refetchKategoriSampah}
+            idTrash={idTrashActive}
+          />
           <div className="w-full sm:w-auto flex mt-4 sm:mt-0">
             <button
               onClick={() => {
@@ -91,7 +101,13 @@ const Kategori = () => {
                         <td>{data.category}</td>
                         <td>{data.price}/KG</td>
                         <td>
-                          <span class="btn btn-app">
+                          <span
+                            class="btn btn-app"
+                            onClick={() => {
+                              setIdTrashActive(data.id);
+                              setIsEditTrashCategorykModalOpen(true);
+                            }}
+                          >
                             <i class="fas fa-edit"></i> Edit
                           </span>
                         </td>
