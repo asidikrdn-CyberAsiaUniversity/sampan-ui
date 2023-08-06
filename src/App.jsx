@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import Footer from "./component/Footer";
 import AdminPrivateRoute from "./component/PrivateRoute/AdminPrivateRoute";
 import PublicRoute from "./component/PrivateRoute/PublicRoute";
 import { API, setAuthToken } from "./config/api";
@@ -55,7 +54,6 @@ function App() {
           </Route>
         </Routes>
       </main>
-      <Footer />
     </>
   );
 }

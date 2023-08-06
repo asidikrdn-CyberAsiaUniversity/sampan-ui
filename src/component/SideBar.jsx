@@ -86,7 +86,7 @@ const SideBar = () => {
               </div>
             </div>
           </div>
-          <div class="sb-sidenav-footer"></div>
+          <div class="sb-sidenav-footer py-3"></div>
         </nav>
       </div>
     </>

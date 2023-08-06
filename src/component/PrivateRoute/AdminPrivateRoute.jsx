@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import NavigationBar from "../NavigationBar";
 import SideBar from "../SideBar";
+import Footer from "../Footer";
 
 const AdminPrivateRoute = () => {
   return (
@@ -15,6 +16,7 @@ const AdminPrivateRoute = () => {
             <SideBar />
             <div id="layoutSidenav_content">
               <Outlet />
+              <Footer />
             </div>
           </div>
         </>
