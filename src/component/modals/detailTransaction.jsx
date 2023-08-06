@@ -98,11 +98,10 @@ const DetailTrxModal = ({ isOpen, setIsOpen, idTrx }) => {
                       </label>
                     </div>
                     <div className="col-12 col-lg-8">
-                      <div>: {trx?.trash?.price}</div>
+                      <div>: Rp {trx?.trash?.price.toLocaleString()}</div>
                     </div>
                   </div>
-                </div>
-                <div className="col-6">
+
                   <h5 className="mt-3">Transaksi</h5>
                   <div className="row">
                     <div className="col-12 col-lg-4">
@@ -111,7 +110,7 @@ const DetailTrxModal = ({ isOpen, setIsOpen, idTrx }) => {
                       </label>
                     </div>
                     <div className="col-12 col-lg-8">
-                      <div>: {trx?.qty}</div>
+                      <div>: {trx?.qty} kg</div>
                     </div>
                   </div>
                   <div className="row">
@@ -121,15 +120,13 @@ const DetailTrxModal = ({ isOpen, setIsOpen, idTrx }) => {
                       </label>
                     </div>
                     <div className="col-12 col-lg-8">
-                      <div>: {trx?.totalPrice}</div>
+                      <div>: Rp {trx?.totalPrice.toLocaleString()}</div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <h5 className="mt-3">Nasabah</h5>
-              <div className="row">
                 <div className="col-6">
+                  <h5 className="mt-3">Nasabah</h5>
                   <div className="row">
                     <div className="col-12 col-lg-4">
                       <label for="fullname" class="form-label">
@@ -150,8 +147,6 @@ const DetailTrxModal = ({ isOpen, setIsOpen, idTrx }) => {
                       <div>: {trx?.customer?.email}</div>
                     </div>
                   </div>
-                </div>
-                <div className="col-6">
                   <div className="row">
                     <div className="col-12 col-lg-4">
                       <label for="phone" class="form-label">
