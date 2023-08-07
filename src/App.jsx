@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import AdminPrivateRoute from "./component/PrivateRoute/AdminPrivateRoute";
 import PublicRoute from "./component/PrivateRoute/PublicRoute";
 import { API, setAuthToken } from "./config/api";
@@ -11,6 +11,8 @@ import Staff from "./pages/Staff";
 import Transaction from "./pages/Transaction";
 
 function App() {
+  const navigate = useNavigate();
+
   const checkAuth = async () => {
     console.log("menjalankan func check auth");
     if (localStorage.getItem("token")) {
@@ -28,12 +30,14 @@ function App() {
       localStorage.removeItem("token");
       localStorage.removeItem("isLogin");
       localStorage.removeItem("role");
+      navigate("/login");
     }
   };
 
   useEffect(() => {
     checkAuth();
     console.log("use effect di app js");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   console.log(API.defaults.headers.common["Authorization"]);
