@@ -177,6 +177,7 @@ const Transaction = () => {
                             class="btn btn-app"
                             style={{
                               display:
+                                // eslint-disable-next-line eqeqeq
                                 localStorage.getItem("role") != 1 && "none",
                             }}
                             onClick={() => {
