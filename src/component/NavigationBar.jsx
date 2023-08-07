@@ -7,8 +7,8 @@ const NavigationBar = () => {
   return (
     <>
       <nav
-        class="sb-topnav navbar navbar-expand navbar-dark bg-dark"
-        // style={{ height: "8vh" }}
+        class="sb-topnav navbar navbar-expand navbar-dark bg-dark fixed-top"
+        style={{ height: "5vh" }}
       >
         {/* <!-- Navbar Brand--> */}
         <a class="navbar-brand ps-3" href="index.html">
@@ -54,19 +54,19 @@ const NavigationBar = () => {
               class="dropdown-menu dropdown-menu-end"
               aria-labelledby="navbarDropdown"
             >
-              <li>
+              {/* <li>
                 <a class="dropdown-item" href="#!">
                   Profile
                 </a>
-              </li>
+              </li> */}
               {/* <li>
                 <a class="dropdown-item" href="#!">
                   Activity Log
                 </a>
               </li> */}
-              <li>
+              {/* <li>
                 <hr class="dropdown-divider" />
-              </li>
+              </li> */}
               <li>
                 <span
                   class="dropdown-item"

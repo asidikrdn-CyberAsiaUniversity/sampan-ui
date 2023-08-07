@@ -9,7 +9,13 @@ const SideBar = () => {
         <nav
           class="sb-sidenav accordion sb-sidenav-dark"
           id="sidenavAccordion"
-          // style={{ height: "92vh", width: 250 }}
+          style={{
+            width: "12vw",
+            height: "95vh",
+            position: "sticky",
+            top: "5vh",
+          }}
+          // style={{ , width: 250 }}
         >
           <div class="sb-sidenav-menu">
             <div class="nav">

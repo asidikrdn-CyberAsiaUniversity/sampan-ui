@@ -12,9 +12,12 @@ const AdminPrivateRoute = () => {
       ) : (
         <>
           <NavigationBar />
-          <div id="layoutSidenav">
+          <div id="layoutSidenav" style={{ minHeight: "100vh" }}>
             <SideBar />
-            <div id="layoutSidenav_content">
+            <div
+              id="layoutSidenav_content"
+              style={{ overflow: "scroll", marginTop: "5vh" }}
+            >
               <Outlet />
               <Footer />
             </div>
