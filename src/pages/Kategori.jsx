@@ -63,7 +63,7 @@ const Kategori = () => {
           });
         }
         refetchKategoriSampah();
-        Swal.fire("Deleted!", "Your file has been deleted.", "success");
+        Swal.fire("Deleted!", "Your trash category has been deleted.", "success");
       }
     } catch (e) {
       console.log(e);
