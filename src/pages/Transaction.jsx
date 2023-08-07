@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import { API } from "../config/api";
 import { BeatLoader } from "react-spinners";
 import CreateTransaction from "../component/modals/addTransaction";
@@ -7,9 +7,12 @@ import moment from "moment";
 import "moment/locale/id";
 import DetailTrxModal from "../component/modals/detailTransaction";
 import EditTransaction from "../component/modals/editTransaction";
+import Swal from "sweetalert2";
+
 moment.locale("id");
 
 const Transaction = () => {
+  const [totalData, setTotalData] = useState();
   const [activePage, setActivePage] = useState(1);
   const [hoveredPage, setHoveredPage] = useState(0);
   const [pages, setPages] = useState([1, 2, 3]);
@@ -18,6 +21,7 @@ const Transaction = () => {
   const [isDetailTrxkModalOpen, setIsDetailTrxkModalOpen] = useState(false);
   const [isEditTrxkModalOpen, setIsEditTrxkModalOpen] = useState(false);
   const [idTrxActive, setIdTrxActive] = useState();
+  const [limit] = useState(10);
 
   const {
     data: transaksi,
@@ -32,7 +36,7 @@ const Transaction = () => {
     async () => {
       try {
         const response = await API.get(
-          `/trash/transactions?page=${activePage}&limit=10`
+          `/trash/transactions?page=${activePage}&limit=${limit}`
         );
 
         let pages = [];
@@ -41,12 +45,35 @@ const Transaction = () => {
         }
 
         setPages(pages);
+        setTotalData(response.data.totalData);
+
         return response.data.data;
       } catch (e) {
         console.log(e);
       }
     }
   );
+
+  const handleDeleteTransaction = useMutation(async (id) => {
+    try {
+      const response = await API.delete(`/trash/transactions/${id}`);
+      if (response.data.status === 200) {
+        if (
+          pages?.length > 1 &&
+          activePage === pages?.length &&
+          totalData - (pages?.length - 1) * limit === 1
+        ) {
+          setActivePage((prev) => {
+            return prev - 1;
+          });
+        }
+        refetchTransaksi();
+        Swal.fire("Deleted!", "Your transaction has been deleted.", "success");
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  });
 
   return (
     <>
@@ -113,7 +140,11 @@ const Transaction = () => {
                   {transaksi?.map((el, i) => {
                     return (
                       <tr>
-                        <th scope="row">{i + 1}</th>
+                        <th scope="row">
+                          {activePage === 1
+                            ? i + 1
+                            : i + (activePage - 1) * limit + 1}
+                        </th>
                         <td>
                           {moment(el.transactionTime).format(
                             "dddd, D MMMM YYYY HH:mm"
@@ -131,7 +162,7 @@ const Transaction = () => {
                               setIsDetailTrxkModalOpen(true);
                             }}
                           >
-                            <i class="fas fa-eye"></i> View
+                            <i class="fas fa-eye"></i>
                           </span>
                           <span
                             class="btn btn-app"
@@ -140,7 +171,31 @@ const Transaction = () => {
                               setIsEditTrxkModalOpen(true);
                             }}
                           >
-                            <i class="fas fa-edit"></i> Edit
+                            <i class="fas fa-edit"></i>
+                          </span>
+                          <span
+                            class="btn btn-app"
+                            style={{
+                              display:
+                                localStorage.getItem("role") != 1 && "none",
+                            }}
+                            onClick={() => {
+                              Swal.fire({
+                                title: "Are you sure?",
+                                text: "You won't be able to revert this!",
+                                icon: "warning",
+                                showCancelButton: true,
+                                confirmButtonColor: "#3085d6",
+                                cancelButtonColor: "#d33",
+                                confirmButtonText: "Yes, delete it!",
+                              }).then((result) => {
+                                if (result.isConfirmed) {
+                                  handleDeleteTransaction.mutate(el.id);
+                                }
+                              });
+                            }}
+                          >
+                            <i class="fas fa-trash"></i>
                           </span>
                         </td>
                       </tr>
